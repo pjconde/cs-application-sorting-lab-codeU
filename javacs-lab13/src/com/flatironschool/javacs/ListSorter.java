@@ -63,8 +63,36 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> mergeSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+        // Splits into two lists
+        if (list.size() == 1) {
+        	return list;
+        }
+        int mid = list.size()/2;
+        List<T> left = list.subList(0, mid);
+    	List<T> right = list.subList(mid, list.size());
+    	// Recursive call to each half
+    	mergeSort(left, comparator);
+    	mergeSort(right, comparator);
+    	List<T> output = merge(left, right, comparator);
+        return output;
+	}
+
+	private List<T> merge(List<T> a, List<T> b, Comparator<T> comparator) {
+		insertionSort(a, comparator);
+		insertionSort(b, comparator);
+		List<T> newList = new ArrayList<T>();
+		int mergeSize = a.size() + b.size();
+		int i = 0;
+        int j = 0;
+        while (i + j < mergeSize) {
+            if (j == b.size() || (i < a.size()
+                    && comparator.compare(a.get(i), b.get(j)) <= 0)) {
+                newList.add(i + j, a.get(i++));
+            } else {
+                newList.add(i + j, b.get(j++));
+            }
+        }
+		return newList;
 	}
 
 	/**
@@ -76,6 +104,14 @@ public class ListSorter<T> {
 	 */
 	public void heapSort(List<T> list, Comparator<T> comparator) {
         // FILL THIS IN!
+        PriorityQueue<T> pq = new PriorityQueue<>(list.size(), comparator);
+        for (T item :list) {
+        	pq.offer(item);
+        }
+        list.clear();
+        while (!pq.isEmpty()) {
+        	list.add(pq.poll());
+        }
 	}
 
 	
@@ -90,7 +126,23 @@ public class ListSorter<T> {
 	 */
 	public List<T> topK(int k, List<T> list, Comparator<T> comparator) {
         // FILL THIS IN!
-        return null;
+        PriorityQueue<T> pq = new PriorityQueue<>(list.size(), comparator);
+        for (T x: list) {
+        	if (pq.size() < k) {
+        		pq.offer(x);
+        	} else {
+        		int comp = comparator.compare(x, pq.peek());
+        		if (comp > 0) {
+        			pq.poll();
+        			pq.offer(x);
+        		}
+        	}
+        }
+        List<T> output = new ArrayList<>();
+        while (!pq.isEmpty()) {
+        	output.add(pq.poll());
+        }
+        return output;
 	}
 
 	
